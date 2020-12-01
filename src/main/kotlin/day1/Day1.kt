@@ -5,24 +5,20 @@ package day1
  */
 fun solveA(items: List<String>): Int {
 
-    val groupBy = items.groupBy({ it[it.lastIndex].toString().toInt() }, { it.toInt() })
+    val numbers = items.map { it.toInt() }.toSet()
 
-    for (first in 0..5) {
-        val second = (10 - first) % 10
+    return findParts(numbers, 2020) ?: throw IllegalStateException("No solution found")
+}
 
-        val firstBucket = groupBy[first] ?: emptyList()
-        val secondBucket = groupBy[second] ?: emptyList()
+private fun findParts(numbers: Set<Int>, requiredSum: Int): Int? {
 
-        for (i in firstBucket) {
-            for (j in secondBucket) {
-                if (i != j && i + j == 2020) {
-                    return i * j
-                }
-            }
+    for (first in numbers) {
+        val second = requiredSum - first
+        if (second in numbers) {
+            return first * second
         }
     }
-
-    throw IllegalStateException("No solution found")
+    return null
 }
 
 
@@ -31,27 +27,13 @@ fun solveA(items: List<String>): Int {
  */
 fun solveB(items: List<String>): Int {
 
-    val groupBy = items.groupBy({ it[it.lastIndex].toString().toInt() }, { it.toInt() })
+    val numbers = items.map { it.toInt() }.toMutableSet()
 
-    for (first in 0..9) {
-        val firstBucket = groupBy[first] ?: emptyList()
+    for (first in numbers) {
+        val parts = findParts(numbers, 2020 - first)
 
-        for (second in 0..9) {
-            val secondBucket = groupBy[second] ?: emptyList()
-
-            val third = (10 - (first + second) % 10) % 10
-            val thirdBucket = groupBy[third] ?: emptyList()
-
-            for (i in firstBucket) {
-                for (j in secondBucket) {
-                    for (k in thirdBucket) {
-                        if (i != j && i != k && k != j && i + j + k == 2020) {
-                            return i * j * k
-                        }
-                    }
-                }
-            }
-
+        if (parts != null) {
+            return parts * first
         }
     }
 
