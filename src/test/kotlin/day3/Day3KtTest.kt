@@ -11,8 +11,8 @@ internal class Day3KtTest {
     fun sample1() {
         val lines = readDayFile(3, "sample1.in").readLines()
 
-        assertEquals(0, solveA(lines))
-        assertEquals(0, solveB(lines))
+        assertEquals(7, solveA(lines))
+        assertEquals(336, solveB(lines))
     }
 
     @Test
@@ -21,10 +21,10 @@ internal class Day3KtTest {
 
         val solveA = solveA(lines)
         println("A: $solveA")
-        assertEquals(0, solveA)
+        assertEquals(162, solveA)
 
         val solveB = solveB(lines)
         println("B: $solveB")
-        assertEquals(0, solveB)
+        assertEquals(3064612320, solveB)
     }
 }
