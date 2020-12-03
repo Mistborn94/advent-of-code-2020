@@ -19,8 +19,8 @@ fun <T> BlockingQueue<T>.drainToList(): List<T> {
     return outputList
 }
 
-fun <T> List<List<T>>.indexOf(char: T): Point {
-    val startingY = this.indexOfFirst { it.contains(char) }
-    return Point(this[startingY].indexOf(char), startingY)
+fun <T> List<List<T>>.indexOf(item: T): Point {
+    val startingY = this.indexOfFirst { it.contains(item) }
+    return Point(this[startingY].indexOf(item), startingY)
 }
 
