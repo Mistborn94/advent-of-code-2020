@@ -1,39 +1,26 @@
 package day4
 
-fun solveA(lines: List<String>): Int {
-    val requiredFields = setOf(
-        "byr",
-        "iyr",
-        "eyr",
-        "hgt",
-        "hcl",
-        "ecl",
-        "pid"
-    )
+fun solveA(text: String): Int {
+    val lines = text.replace("\r", "").replace("\n\n", "|").replace("\n", " ").split("|")
 
-    var validCount = 0
-    val currentFields = mutableSetOf<String>()
-    lines.forEach {
-        if (it.isBlank()) {
-            if (currentFields.containsAll(requiredFields)) {
-                validCount++
-            }
-            currentFields.clear()
-        } else {
-            currentFields.addAll(it.split(" ")
-                .map { item -> item.substringBefore(":") })
-        }
+    val requiredFields = setOf("byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid")
 
+    return lines.count { passport ->
+        passport.split(" ")
+            .map { item -> item.substringBefore(":") }
+            .containsAll(requiredFields)
     }
-    return validCount;
 }
 
+fun solveB(text: String): Int {
 
-fun solveB(lines: List<String>): Int {
+    val lines = text.replace("\r", "").replace("\n\n", "|").replace("\n", " ").split("|")
+
     val numerical = "\\d+".toRegex()
     val hclRegex = "#[0-9a-f]{6}".toRegex()
     val eyeColors = setOf("amb", "blu", "brn", "gry", "grn", "hzl", "oth")
     val pidRegex = "\\d{9}".toRegex()
+
     val requiredFields = mapOf<String, (String) -> Boolean>(
         "byr" to { it.matches(numerical) && it.toInt() in 1920..2002 },
         "iyr" to { it.matches(numerical) && it.toInt() in 2010..2020 },
@@ -47,24 +34,11 @@ fun solveB(lines: List<String>): Int {
         "pid" to { it.matches(pidRegex) }
     )
 
-
-    var validCount = 0
-    val currentFields = mutableSetOf<String>()
-    lines.forEach {
-        if (it.isBlank()) {
-            if (currentFields.containsAll(requiredFields.keys)) {
-                validCount++
-            }
-            currentFields.clear()
-        } else {
-            currentFields.addAll(
-                it.split(" ")
-                    .map { item -> item.split(":") }
-                    .filter { (key, value) -> requiredFields[key]?.invoke(value) ?: true }
-                    .map { (key, _) -> key }
-            )
-        }
-
+    return lines.count { passport ->
+        passport.trim().split(" ")
+            .map { item -> item.split(":") }
+            .filter { (key, value) -> requiredFields[key]?.invoke(value) ?: true }
+            .map { (key, _) -> key }
+            .containsAll(requiredFields.keys)
     }
-    return validCount;
 }

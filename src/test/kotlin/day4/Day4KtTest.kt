@@ -8,21 +8,21 @@ internal class Day4KtTest {
 
     @Test
     fun sample1() {
-        val lines = readDayFile(4, "sample1.in").readLines() + ""
+        val lines = readDayFile(4, "sample1.in").readText()
 
         assertEquals(2, solveA(lines))
     }
 
     @Test
     fun sample2() {
-        val lines = readDayFile(4, "sample2.in").readLines() + ""
+        val lines = readDayFile(4, "sample2.in").readText()
 
         assertEquals(4, solveB(lines))
     }
 
     @Test
     fun solve() {
-        val lines = readDayFile(4, "input").readLines() + ""
+        val lines = readDayFile(4, "input").readText()
 
         val solveA = solveA(lines)
         println("A: $solveA")
