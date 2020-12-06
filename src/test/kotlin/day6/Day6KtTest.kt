@@ -36,6 +36,6 @@ internal class Day6KtTest {
         val solveB = solveB(lines)
         println("B: $solveB")
         assertTrue(solveB > 3211)
-//        assertEquals(0, solveB)
+        assertEquals(3235, solveB)
     }
 }
