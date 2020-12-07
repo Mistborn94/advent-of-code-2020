@@ -2,28 +2,25 @@ package day7
 
 import helper.readDayFile
 import org.junit.jupiter.api.Assertions.assertEquals
-import kotlin.test.Ignore
 import kotlin.test.Test
 
-@Ignore
 internal class Day7KtTest {
 
-    val day = 0
+    val day = 7
 
     @Test
     fun sample1() {
         val lines = readDayFile(day, "sample1.in").readLines()
 
-        assertEquals(0, solveA(lines))
-        assertEquals(0, solveB(lines))
+        assertEquals(4, solveA(lines))
+        assertEquals(32, solveB(lines))
     }
 
     @Test
     fun sample2() {
         val lines = readDayFile(day, "sample2.in").readLines()
 
-        assertEquals(0, solveA(lines))
-        assertEquals(0, solveB(lines))
+        assertEquals(126, solveB(lines))
     }
 
     @Test
@@ -32,10 +29,10 @@ internal class Day7KtTest {
 
         val solveA = solveA(lines)
         println("A: $solveA")
-        assertEquals(0, solveA)
+        assertEquals(213, solveA)
 
         val solveB = solveB(lines)
         println("B: $solveB")
-        assertEquals(0, solveB)
+        assertEquals(38426, solveB)
     }
 }
