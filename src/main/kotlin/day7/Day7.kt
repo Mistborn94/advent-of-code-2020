@@ -1,27 +1,25 @@
 package day7
 
-class Bag(val name: String) {
+class Bag(private val colour: String) {
 
     val contains: MutableList<Pair<Bag, Int>> = mutableListOf()
     val containedIn: MutableList<Bag> = mutableListOf()
 
-    fun containsCount(): Int = contains.sumBy { (bag, count) ->
-        (bag.containsCount() + 1) * count
-    }
+    fun containsCount(): Int = contains.sumBy { (bag, count) -> (bag.containsCount() + 1) * count }
 
-    override fun toString(): String {
-        return "Bag(name='$name')"
-    }
+    fun containedInNames(): Set<String> = containedIn.flatMap { it.containedInNames() + it.colour }.toSet()
+
+    override fun toString(): String = "Bag(colour='$colour')"
 
 }
 
 class Graph {
-    val colourRegex = """^([A-Za-z ]+) bags contain (.*)\.$""".toRegex()
-    val containsRegex = """^(\d+) ([A-Za-z ]+) bags?$""".toRegex()
+    private val colourRegex = """^([A-Za-z ]+) bags contain (.*)\.$""".toRegex()
+    private val containsRegex = """^(\d+) ([A-Za-z ]+) bags?$""".toRegex()
 
     private val bags: MutableMap<String, Bag> = mutableMapOf()
 
-    operator fun get(bag: String) = bags[bag]
+    operator fun get(bag: String) = bags[bag] ?: throw IllegalArgumentException("No item")
 
     fun addRule(rule: String) {
         val (colour, containsRule) = colourRegex.matchEntire(rule)!!.destructured
@@ -44,34 +42,12 @@ class Graph {
 
 }
 
-val shinyGold = "shiny gold"
-fun solveA(lines: List<String>): Int {
-    val graph = Graph()
-    lines.forEach(graph::addRule)
-
-    val seenBags = mutableSetOf<String>()
-    var currentBag = graph[shinyGold]!!
-    val toSeeBags = currentBag.containedIn.toMutableSet()
-
-    while (toSeeBags.isNotEmpty()) {
-        currentBag = toSeeBags.pop()
-        seenBags.add(currentBag.name)
-        toSeeBags.addAll(currentBag.containedIn.filter { it.name !in seenBags })
+fun buildGraph(lines: List<String>): Graph {
+    return Graph().apply {
+        lines.forEach(this::addRule)
     }
-
-    return seenBags.size
 }
 
-private fun MutableSet<Bag>.pop(): Bag {
-    val first = first()
-    remove(first)
-    return first
-}
+fun solveA(lines: List<String>): Int = buildGraph(lines)["shiny gold"].containedInNames().size
+fun solveB(lines: List<String>): Int = buildGraph(lines)["shiny gold"].containsCount()
 
-
-fun solveB(lines: List<String>): Int {
-    val graph = Graph()
-    lines.forEach(graph::addRule)
-
-    return graph[shinyGold]!!.containsCount()
-}
