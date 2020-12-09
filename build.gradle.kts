@@ -21,6 +21,8 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    dependsOn("cleanTest")
+    testLogging.showStandardStreams = true
 }
 
 tasks.withType<KotlinCompile> {
