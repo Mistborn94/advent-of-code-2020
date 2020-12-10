@@ -1,4 +1,4 @@
-REM Add the day as a param :To tun day 8 use
-REM test.bat 8
+:: Takes in the day as the first param
+:: For example: To tun day 8 use `test 8`
 
-gradlew test --tests Day%1KtTest
+gradlew test --tests day%1.*
