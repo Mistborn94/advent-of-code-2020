@@ -1,8 +1,8 @@
 package day5
 
 import helper.readDayFile
-import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 internal class Day5KtTest {
 

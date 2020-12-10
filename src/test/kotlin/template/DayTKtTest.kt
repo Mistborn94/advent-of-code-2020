@@ -1,12 +1,12 @@
 package template
 
 import helper.readDayFile
-import org.junit.jupiter.api.Assertions.assertEquals
 import kotlin.test.Ignore
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 @Ignore
-internal class Day10KtTest {
+internal class DayTKtTest {
 
     val day = 0
 
