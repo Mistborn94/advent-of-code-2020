@@ -3,9 +3,7 @@ package day10
 fun solveA(lines: List<String>): Int {
     val all = getFullList(lines)
 
-    val diffs = getDiffs(all)
-
-    val mapValues = diffs
+    val mapValues = getDiffs(all)
         .groupBy { it }
         .mapValues { (_, value) -> value.size }
 
