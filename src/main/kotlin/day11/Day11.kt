@@ -13,91 +13,86 @@ val directions = listOf(
     Point(-1, +1)
 )
 
-typealias Seats = Array<CharArray>
+class Seats(private val seats: Array<CharArray>) {
+    fun count(c: Char): Int = seats.sumBy { it.count { value -> value == c } }
 
-fun solveA(lines: List<String>): Int {
-    return simulateUntilStable(lines) { simulateA(it) }
-}
-
-private fun simulateUntilStable(lines: List<String>, simulate: (Seats) -> Seats): Int {
-    var seats = lines.map { it.toCharArray() }.toTypedArray()
-    var previousSeats: Seats = Array(0) { CharArray(0) }
-    while (!seats.contentDeepEquals(previousSeats)) {
-        previousSeats = seats
-        seats = simulate(previousSeats)
+    companion object {
+        fun sized(width: Int, height: Int): Seats = Seats(Array(height) { CharArray(width) })
     }
-    return seats.sumBy { it.count { s -> s == '#' } }
-}
 
-fun simulateA(seats: Seats): Seats {
-    val newSeats = Array(seats.size) { CharArray(seats[0].size) }
+    private val width: Int
+        get() = seats[0].size
+    val height = seats.size
 
-    val yRange = newSeats.indices
-    val xRange = newSeats[0].indices
-    for (y in yRange) {
-        for (x in xRange) {
-            val current = seats[y][x]
-            val adjacent =
-                Point(x, y).neighboursWithDiagonals().filter { it.x in xRange && it.y in yRange }.map { seats[it] }
-            if (current == 'L' && adjacent.count { it == '#' } == 0) {
-                newSeats[y][x] = '#'
-            } else if (current == '#' && adjacent.count { it == '#' } >= 4) {
-                newSeats[y][x] = 'L'
-            } else {
-                newSeats[y][x] = seats[y][x]
+    private val yRange = seats.indices
+    private val xRange: IntRange
+        get() = seats[0].indices
+
+    private val indices: List<Point>
+        get() = xRange.flatMap { x -> yRange.map { y -> Point(x, y) } }
+
+    override operator fun equals(other: Any?): Boolean = other is Seats && seats.contentDeepEquals(other.seats)
+    override fun hashCode(): Int = seats.contentDeepHashCode()
+    operator fun contains(point: Point) = point.x in xRange && point.y in yRange
+
+    operator fun get(it: Point): Char = seats[it.y][it.x]
+    operator fun set(it: Point, char: Char) {
+        seats[it.y][it.x] = char
+    }
+
+    fun simulateUntilStable(calculateSeat: (Seats, Point) -> Char): Seats {
+        var new = this
+        var previousSeats = sized(0, 0)
+        while (new != previousSeats) {
+            previousSeats = new
+            new = run {
+                val newSeats = sized(previousSeats.width, previousSeats.height)
+                for (point in newSeats.indices) {
+                    newSeats[point] = calculateSeat(previousSeats, point)
+                }
+                newSeats
             }
         }
+        return new
     }
-    return newSeats;
-}
 
-fun simulateB(seats: Array<CharArray>): Array<CharArray> {
+    fun calculateSeatA(point: Point): Char {
+        val current = this[point]
+        val adjacent = directions.map { point + it }
+            .filter { it in this }
+            .map { this[it] }
 
-    val newSeats = Array(seats.size) { CharArray(seats[0].size) }
-
-    val yRange = newSeats.indices
-    val xRange = newSeats[0].indices
-    for (y in yRange) {
-        for (x in xRange) {
-            val current = seats[y][x]
-            val point = Point(x, y)
-            val seen = directions.map { firstSeenInDirection(point, it, seats) }
-                .filter { it in seats }
-                .map { seats[it] }
-            if (current == 'L' && seen.count { it == '#' } == 0) {
-                newSeats[y][x] = '#'
-            } else if (current == '#' && seen.count { it == '#' } >= 5) {
-                newSeats[y][x] = 'L'
-            } else {
-                newSeats[y][x] = seats[y][x]
-            }
+        return when {
+            current == 'L' && adjacent.count { it == '#' } == 0 -> '#'
+            current == '#' && adjacent.count { it == '#' } >= 4 -> 'L'
+            else -> this[point]
         }
     }
-    return newSeats;
-}
 
-fun firstSeenInDirection(start: Point, direction: Point, seats: Array<CharArray>): Point {
+    fun calculateSeatB(point: Point): Char {
+        val currentValue = this[point]
 
-    var point = start + direction
+        val seen = directions.mapNotNull {
+            pointsInDirection(point, it).firstOrNull { p -> this[p] != '.' }
+        }.map { this[it] }
 
-    while (point in seats && seats[point] == '.') {
-        point += direction
+        return when {
+            currentValue == 'L' && seen.count { it == '#' } == 0 -> '#'
+            currentValue == '#' && seen.count { it == '#' } >= 5 -> 'L'
+            else -> this[point]
+        }
     }
-    return point
+
+    private fun pointsInDirection(start: Point, direction: Point): Sequence<Point> =
+        generateSequence(start + direction) { it + direction }.takeWhile { it in this }
 }
 
+fun solveA(lines: List<String>): Int =
+    Seats(lines.map { it.toCharArray() }.toTypedArray())
+        .simulateUntilStable(Seats::calculateSeatA)
+        .count('#')
 
-private operator fun Array<CharArray>.contains(point: Point) =
-    point.x in this[0].indices && point.y in indices
-
-private operator fun Array<CharArray>.get(it: Point): Char = this[it.y][it.x]
-
-fun solveB(lines: List<String>): Int {
-    var seats = lines.map { it.toCharArray() }.toTypedArray()
-    var previousSeats = Array(0) { CharArray(0) }
-    while (!seats.contentDeepEquals(previousSeats)) {
-        previousSeats = seats
-        seats = simulateB(previousSeats)
-    }
-    return seats.sumBy { it.count { s -> s == '#' } }
-}
+fun solveB(lines: List<String>): Int =
+    Seats(lines.map { it.toCharArray() }.toTypedArray())
+        .simulateUntilStable(Seats::calculateSeatB)
+        .count('#')
