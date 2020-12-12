@@ -42,17 +42,17 @@ fun solveA(lines: List<String>): Int {
         val action = line[0]
         val value = line.substring(1, line.length).toInt()
         when (action) {
-            'N' -> currentPosition += (NORTH.point * value)
-            'S' -> currentPosition += (SOUTH.point * value)
-            'E' -> currentPosition += (EAST.point * value)
-            'W' -> currentPosition += (WEST.point * value)
+            'N' -> currentPosition += NORTH.point * value
+            'S' -> currentPosition += SOUTH.point * value
+            'E' -> currentPosition += EAST.point * value
+            'W' -> currentPosition += WEST.point * value
             'L' -> repeat(value / 90) {
                 currentDirection = currentDirection.left
             }
             'R' -> repeat(value / 90) {
                 currentDirection = currentDirection.right
             }
-            'F' -> currentPosition += (currentDirection.point * value)
+            'F' -> currentPosition += currentDirection.point * value
         }
 
     }
@@ -67,21 +67,13 @@ fun solveB(lines: List<String>): Int {
         val action = line[0]
         val value = line.substring(1, line.length).toInt()
         when (action) {
-            'N' -> waypointPosition += (NORTH.point * value)
-            'S' -> waypointPosition += (SOUTH.point * value)
-            'E' -> waypointPosition += (EAST.point * value)
-            'W' -> waypointPosition += (WEST.point * value)
-            'L' -> when (value) {
-                90 -> waypointPosition = Point(-waypointPosition.y, waypointPosition.x)
-                180 -> waypointPosition = Point(-waypointPosition.x, -waypointPosition.y)
-                270 -> waypointPosition = Point(waypointPosition.y, -waypointPosition.x)
-            }
-            'R' -> when (value) {
-                90 -> waypointPosition = Point(waypointPosition.y, -waypointPosition.x)
-                180 -> waypointPosition = Point(-waypointPosition.x, -waypointPosition.y)
-                270 -> waypointPosition = Point(-waypointPosition.y, waypointPosition.x)
-            }
-            'F' -> shipPosition += (waypointPosition * value)
+            'N' -> waypointPosition += NORTH.point * value
+            'S' -> waypointPosition += SOUTH.point * value
+            'E' -> waypointPosition += EAST.point * value
+            'W' -> waypointPosition += WEST.point * value
+            'L' -> waypointPosition = waypointPosition.counterClockwise(value)
+            'R' -> waypointPosition = waypointPosition.clockwise(value)
+            'F' -> shipPosition += waypointPosition * value
         }
 
     }
