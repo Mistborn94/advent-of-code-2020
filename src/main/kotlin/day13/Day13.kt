@@ -1,5 +1,7 @@
 package day13
 
+import helper.leastCommonMultiple
+
 fun solveA(lines: List<String>): Int {
     val start = lines[0].toInt()
     val bus = lines[1].split(",")
@@ -12,22 +14,25 @@ fun solveA(lines: List<String>): Int {
 
 private fun remainingMinutes(bus: Int, start: Int) = bus - (start % bus)
 
-data class RunningBus(val id: Int, val offset: Int) {
-
+data class Bus(val id: Long, val offset: Int) {
     fun runsAt(timestamp: Long) = timestamp % id == 0L
-    val runningTimes = generateSequence(id.toLong()) { it + id }
 }
 
-fun solveB(lines: List<String>): Long {
-    val busses = lines[1]
+data class LcmSequence(val start: Long, val increment: Long) {
+    fun runningTimes() = generateSequence(start) { it + increment }
+}
+
+fun solveB(line: String, start: Long = 0L): Long {
+    val busses = line
         .split(",")
-        .mapIndexedNotNull { index, line -> if (line == "x") null else RunningBus(line.toInt(), index) }
+        .mapIndexedNotNull { index, id -> if (id == "x") null else Bus(id.toLong(), index) }
 
-    val maxBus = busses.maxByOrNull { it.id }!!
-    val remainingBusses = busses.filter { it != maxBus }
+    return busses.fold(LcmSequence(start, 1)) { combined, second ->
+        val lcm = leastCommonMultiple(combined.increment, second.id)
 
-    return maxBus.runningTimes.first { time ->
-        val firstTime = time - maxBus.offset
-        remainingBusses.all { it.runsAt(firstTime + it.offset) }
-    } - maxBus.offset
+        val time = combined.runningTimes().first { time ->
+            second.runsAt(time + second.offset)
+        }
+        LcmSequence(time, lcm)
+    }.start
 }

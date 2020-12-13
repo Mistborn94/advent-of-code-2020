@@ -13,15 +13,20 @@ internal class Day13KtTest {
         val lines = readDayFile(day, "sample1.in").readLines()
 
         assertEquals(295, solveA(lines))
-        assertEquals(1068781, solveB(lines))
+        assertEquals(1068781, solveB(lines[1], 1000000))
     }
 
-    //    @Test
+    @Test
     fun sample2() {
-        val lines = readDayFile(day, "sample2.in").readLines()
+        assertEquals(754018, solveB("67,7,59,61"))
+        assertEquals(779210, solveB("67,x,7,59,61"))
+        assertEquals(1261476, solveB("67,7,x,59,61"))
 
-        assertEquals(0, solveA(lines))
-        assertEquals(0, solveB(lines))
+    }
+
+    @Test
+    fun sample3() {
+        assertEquals(1202161486, solveB("1789,37,47,1889"))
     }
 
     @Test
@@ -32,8 +37,8 @@ internal class Day13KtTest {
         println("A: $solveA")
         assertEquals(3882, solveA)
 
-        val solveB = solveB(lines)
+        val solveB = solveB(lines[1], 100000000000000L)
         println("B: $solveB")
-//        assertEquals(0, solveB)
+        assertEquals(867295486378319, solveB)
     }
 }
