@@ -1,6 +1,6 @@
 package day13
 
-import helper.leastCommonMultiple
+import helper.lowestCommonMultiple
 
 fun solveA(lines: List<String>): Int {
     val start = lines[0].toInt()
@@ -28,7 +28,7 @@ fun solveB(line: String, start: Long = 0L): Long {
         .mapIndexedNotNull { index, id -> if (id == "x") null else Bus(id.toLong(), index) }
 
     return busses.fold(LcmSequence(start, 1)) { combined, second ->
-        val lcm = leastCommonMultiple(combined.increment, second.id)
+        val lcm = lowestCommonMultiple(combined.increment, second.id)
 
         val time = combined.runningTimes().first { time ->
             second.runsAt(time + second.offset)

@@ -24,25 +24,21 @@ fun <T> List<List<T>>.indexOf(item: T): Point {
     return Point(this[startingY].indexOf(item), startingY)
 }
 
-private val gcdMap = mutableMapOf<Pair<Long, Long>, Long>()
-
-fun leastCommonMultiple(a: Long, b: Long): Long = (a * b) / greatestCommonDivisor(a, b)
+fun lowestCommonMultiple(a: Long, b: Long): Long = (a * b) / greatestCommonDivisor(a, b)
 
 fun greatestCommonDivisor(a: Long, b: Long): Long {
     val aIsEven = a % 2 == 0L
     val bIsEven = b % 2 == 0L
-    return gcdMap.getOrPut(minOf(a, b) to maxOf(a, b)) {
-        when {
-            a == 0L -> b
-            b == 0L -> a
-            aIsEven && bIsEven -> greatestCommonDivisor(a / 2, b / 2) * 2
-            aIsEven -> greatestCommonDivisor(a / 2, b)
-            bIsEven -> greatestCommonDivisor(a, b / 2)
-            else -> {
-                val first = maxOf(a, b)
-                val second = minOf(a, b)
-                greatestCommonDivisor(second, first % second)
-            }
+    return when {
+        a == 0L -> b
+        b == 0L -> a
+        aIsEven && bIsEven -> greatestCommonDivisor(a / 2, b / 2) * 2
+        aIsEven -> greatestCommonDivisor(a / 2, b)
+        bIsEven -> greatestCommonDivisor(a, b / 2)
+        else -> {
+            val first = maxOf(a, b)
+            val second = minOf(a, b)
+            greatestCommonDivisor(second, first % second)
         }
     }
 }
