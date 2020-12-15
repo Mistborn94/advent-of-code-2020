@@ -1,19 +1,25 @@
 package day15
 
 fun solveA(input: String): Int {
+    val startingNumbers = input.split(",").map { it.toInt() }
+    return playTurns(startingNumbers, 2020)
+}
 
+fun solveB(input: String): Int {
+    val startingNumbers = input.split(",").map { it.toInt() }
+    return playTurns(startingNumbers, 30_000_000)
+}
+
+fun playTurns(startingNumbers: List<Int>, turns: Int): Int {
     val history = mutableMapOf<Int, NumberHolder>()
 
-    val numbers = input.split(",").map { it.toInt() }
-    numbers.forEachIndexed { i, value ->
-        val turn = i + 1
-        history.getOrPut(value) { NumberHolder() }.next(turn)
+    startingNumbers.forEachIndexed { i, value ->
+        history.getOrPut(value) { NumberHolder() }.next(i + 1)
     }
 
-    var lastNumber = numbers.last()
-    for (turn in (numbers.size + 1)..2020) {
-        val historyItem = history[lastNumber]!!
-        lastNumber = historyItem.calculate()
+    var lastNumber = startingNumbers.last()
+    for (turn in (startingNumbers.size + 1)..turns) {
+        lastNumber = history[lastNumber]!!.calculate()
         history.getOrPut(lastNumber) { NumberHolder() }.next(turn)
     }
 
@@ -29,30 +35,6 @@ class NumberHolder {
         turn2 = number
     }
 
-    fun calculate(): Int {
-        return if (turn1 == null || turn2 == null) {
-            0
-        } else {
-            turn2!! - turn1!!
-        }
-    }
+    fun calculate(): Int = if (turn1 == null) 0 else turn2!! - turn1!!
 }
 
-fun solveB(input: String): Int {
-
-    val history = mutableMapOf<Int, NumberHolder>()
-
-    val numbers = input.split(",").map { it.toInt() }
-    numbers.forEachIndexed { i, value ->
-        val turn = i + 1
-        history.getOrPut(value) { NumberHolder() }.next(turn)
-    }
-
-    var lastNumber = numbers.last()
-    for (turn in (numbers.size + 1)..30_000_000) {
-        val historyItem = history[lastNumber]!!
-        lastNumber = historyItem.calculate()
-        history.getOrPut(lastNumber) { NumberHolder() }.next(turn)
-    }
-    return lastNumber
-}
