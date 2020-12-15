@@ -36,7 +36,8 @@ fun solveA(lines: List<String>): Long {
 fun solveB(lines: List<String>): Long {
 
     val memory = mutableMapOf<Long, Long>()
-    var masks: List<Mask> = emptyList();
+    var masks: List<Mask> = emptyList()
+
     lines.forEach { line ->
         if (line.startsWith("mask")) {
             val maskPattern = line.substringAfter("mask = ")

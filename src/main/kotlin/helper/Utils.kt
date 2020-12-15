@@ -3,6 +3,9 @@ package helper
 import java.util.*
 import java.util.concurrent.BlockingQueue
 
+fun Iterable<Long>.product() = reduce { acc, item -> acc * item }
+fun Iterable<Int>.product() = reduce { acc, item -> acc * item }
+
 fun <T> ArrayList<T>.resize(minimumSize: Int, supplier: () -> T) {
     if (minimumSize < 0) {
         throw IllegalArgumentException("Negative sizes not allowed")
@@ -26,15 +29,18 @@ fun <T> List<List<T>>.indexOf(item: T): Point {
 
 fun lowestCommonMultiple(a: Long, b: Long): Long = (a * b) / greatestCommonDivisor(a, b)
 
-fun greatestCommonDivisor(a: Long, b: Long): Long {
-    val aIsEven = a % 2 == 0L
-    val bIsEven = b % 2 == 0L
+/**
+ * Use the euclidian algorithm to find GCD(A,B)
+ * https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm
+ *  - GCD(A,0) = A
+ *  - GCD(0,B) = B
+ *  - If A = BQ + R and B!=0 then GCD(A,B) = GCD(B,R) where Q is an integer, R is an integer between 0 and B-1
+ */
+//inline fun gcd = ::greatestCommonDivisor
+tailrec fun greatestCommonDivisor(a: Long, b: Long): Long {
     return when {
         a == 0L -> b
         b == 0L -> a
-        aIsEven && bIsEven -> greatestCommonDivisor(a / 2, b / 2) * 2
-        aIsEven -> greatestCommonDivisor(a / 2, b)
-        bIsEven -> greatestCommonDivisor(a, b / 2)
         else -> {
             val first = maxOf(a, b)
             val second = minOf(a, b)
