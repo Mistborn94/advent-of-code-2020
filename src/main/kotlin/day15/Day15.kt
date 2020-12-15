@@ -11,30 +11,18 @@ fun solveB(input: String): Int {
 }
 
 fun playTurns(startingNumbers: List<Int>, turns: Int): Int {
-    val history = mutableMapOf<Int, NumberHolder>()
+    val history = mutableMapOf<Int, Int>()
 
-    startingNumbers.forEachIndexed { i, value ->
-        history.getOrPut(value) { NumberHolder() }.next(i + 1)
+    (0 until startingNumbers.lastIndex).forEach {
+        history[startingNumbers[it]] = it + 1
     }
 
     var lastNumber = startingNumbers.last()
-    for (turn in (startingNumbers.size + 1)..turns) {
-        lastNumber = history[lastNumber]!!.calculate()
-        history.getOrPut(lastNumber) { NumberHolder() }.next(turn)
+    for (turn in startingNumbers.size until turns) {
+        val nextNumber = history[lastNumber]?.let { turn - it } ?: 0
+        history[lastNumber] = turn
+        lastNumber = nextNumber
     }
 
     return lastNumber
 }
-
-class NumberHolder {
-    private var turn1: Int? = null
-    private var turn2: Int? = null
-
-    fun next(number: Int) {
-        turn1 = turn2
-        turn2 = number
-    }
-
-    fun calculate(): Int = if (turn1 == null) 0 else turn2!! - turn1!!
-}
-
