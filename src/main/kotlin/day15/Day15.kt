@@ -17,12 +17,9 @@ fun playTurns(startingNumbers: List<Int>, turns: Int): Int {
         history[startingNumbers[it]] = it + 1
     }
 
-    var lastNumber = startingNumbers.last()
-    for (turn in startingNumbers.size until turns) {
+    return (startingNumbers.size until turns).fold(startingNumbers.last()) { lastNumber, turn ->
         val nextNumber = history[lastNumber]?.let { turn - it } ?: 0
         history[lastNumber] = turn
-        lastNumber = nextNumber
+        nextNumber
     }
-
-    return lastNumber
 }
