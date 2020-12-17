@@ -53,8 +53,8 @@ fun solveB(lines: List<String>): Long {
             if (possibleIndices.size == 1) {
                 val (index, _) = possibleIndices.first()
                 solvedFields[index] = name
-                possibleFieldNames.forEach { it.remove(name) }
                 possibleFieldNames[index].clear()
+                possibleFieldNames.forEach { it.remove(name) }
             }
         }
 
@@ -62,8 +62,8 @@ fun solveB(lines: List<String>): Long {
         possibleFieldNames.withIndex().filter { (_, names) -> names.size == 1 }.forEach { (index, names) ->
             val name = names.first()
             solvedFields[index] = name
-            possibleFieldNames.forEach { it.remove(name) }
             possibleFieldNames[index].clear()
+            possibleFieldNames.forEach { it.remove(name) }
         }
     }
 
