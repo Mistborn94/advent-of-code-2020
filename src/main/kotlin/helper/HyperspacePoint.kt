@@ -1,13 +1,12 @@
 package helper
 
-class HyperspacePoint private constructor(private val parts: IntArray) {
+class HyperspacePoint constructor(val parts: IntArray) {
     val size = parts.size
 
     val neighbours: List<HyperspacePoint>
-        get() = neighbourOffsets(size)
+        get() = neighbourOffsets(size - 1)
             .filter { it.abs != 0 }
-            .map { of(*it) }
-            .map { it + this }
+            .map { this + it }
             .toList()
 
     operator fun get(i: Int) = parts[i]
@@ -15,11 +14,13 @@ class HyperspacePoint private constructor(private val parts: IntArray) {
     operator fun plus(other: HyperspacePoint) =
         HyperspacePoint(IntArray(minOf(size, other.size)) { parts[it] + other.parts[it] })
 
+    operator fun plus(other: IntArray) = HyperspacePoint(IntArray(minOf(size, other.size)) { parts[it] + other[it] })
+
     operator fun minus(other: HyperspacePoint) =
         HyperspacePoint(IntArray(minOf(size, other.size)) { parts[it] - other.parts[it] })
 
-    private fun neighbourOffsets(dimension: Int): Iterable<IntArray> {
-        return if (dimension == 1) {
+    private fun neighbourOffsets(dimension: Int): List<IntArray> {
+        return if (dimension == 0) {
             listOf(IntArray(1) { -1 }, IntArray(1) { 0 }, IntArray(1) { 1 })
         } else {
             neighbourOffsets(dimension - 1).flatMap { sequenceOf(it + -1, it + 0, it + 1) }
@@ -28,9 +29,5 @@ class HyperspacePoint private constructor(private val parts: IntArray) {
 
     override fun equals(other: Any?) = other is HyperspacePoint && parts.contentEquals(other.parts)
     override fun hashCode(): Int = parts.contentHashCode()
-    override fun toString(): String = parts.toString()
-
-    companion object {
-        fun of(vararg parts: Int) = HyperspacePoint(parts)
-    }
+    override fun toString(): String = parts.joinToString(prefix = "[", postfix = "]", separator = ",")
 }
