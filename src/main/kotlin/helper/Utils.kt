@@ -2,6 +2,7 @@ package helper
 
 import java.util.*
 import java.util.concurrent.BlockingQueue
+import kotlin.math.absoluteValue
 
 fun Iterable<Long>.product() = reduce { acc, item -> acc * item }
 fun Iterable<Int>.product() = reduce { acc, item -> acc * item }
@@ -26,6 +27,8 @@ fun <T> List<List<T>>.indexOf(item: T): Point {
     val startingY = this.indexOfFirst { it.contains(item) }
     return Point(this[startingY].indexOf(item), startingY)
 }
+
+val IntArray.abs: Int get() = sumBy { it.absoluteValue }
 
 fun lowestCommonMultiple(a: Long, b: Long): Long = (a * b) / greatestCommonDivisor(a, b)
 

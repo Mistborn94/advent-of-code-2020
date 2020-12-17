@@ -4,7 +4,6 @@ import helper.readDayFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-//@Ignore
 internal class Day17KtTest {
 
     private val day = 17
@@ -17,14 +16,6 @@ internal class Day17KtTest {
         assertEquals(848, solveB(lines))
     }
 
-    //    @Test
-    fun sample2() {
-        val lines = readDayFile(day, "sample2.in").readLines()
-
-        assertEquals(0, solveA(lines))
-        assertEquals(0, solveB(lines))
-    }
-
     @Test
     fun solve() {
         val lines = readDayFile(day, "input").readLines()
@@ -35,6 +26,6 @@ internal class Day17KtTest {
 
         val solveB = solveB(lines)
         println("B: $solveB")
-//        assertEquals(0, solveB)
+        assertEquals(1520, solveB)
     }
 }

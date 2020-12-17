@@ -1,12 +1,10 @@
 package day17
 
-import helper.Point3D
-import helper.Point4D
+import helper.HyperspacePoint
 
 fun solveA(lines: List<String>): Int {
     return ConwayGridA(lines).solveA()
 }
-
 
 fun solveB(lines: List<String>): Int {
     return ConwayGridB(lines).solveB()
@@ -14,7 +12,7 @@ fun solveB(lines: List<String>): Int {
 
 class ConwayGridA(initial: List<String>) {
 
-    var firstPoint = Point3D(0, 0, 0)
+    var firstPoint = HyperspacePoint.of(0, 0, 0)
 
     //z, y, x
     var layers: List<List<List<State>>>
@@ -41,18 +39,18 @@ class ConwayGridA(initial: List<String>) {
 
     private fun iterateA() {
         val newLayers = Array(depth + 2) { blankZ(width + 2, height + 2) }.toList()
-        val newStart = firstPoint - Point3D(1, 1, 1)
+        val newStart = firstPoint - HyperspacePoint.of(1, 1, 1)
 
         newLayers.forEachIndexed { zi, layer ->
-            val z = zi + newStart.z
+            val z = zi + newStart[2]
 
             layer.forEachIndexed { yi, row ->
-                val y = yi + newStart.y
+                val y = yi + newStart[1]
 
                 row.forEachIndexed { xi, _ ->
-                    val x = xi + newStart.x
+                    val x = xi + newStart[0]
 
-                    val point = Point3D(x, y, z)
+                    val point = HyperspacePoint.of(x, y, z)
                     val listIndex = point.toListIndex()
 
                     val cell = if (listIndex in layers) layers[listIndex] else State.INACTIVE
@@ -70,20 +68,20 @@ class ConwayGridA(initial: List<String>) {
         layers = newLayers
     }
 
-    private fun Point3D.toListIndex() = this - firstPoint
+    private fun HyperspacePoint.toListIndex() = this - firstPoint
 
-    operator fun List<List<List<State>>>.contains(point: Point3D): Boolean {
-        return point.z in this.indices && point.y in this[0].indices && point.x in this[0][0].indices
+    operator fun List<List<List<State>>>.contains(point: HyperspacePoint): Boolean {
+        return point[2] in this.indices && point[1] in this[0].indices && point[0] in this[0][0].indices
     }
 
-    operator fun List<List<List<State>>>.get(point3D: Point3D): State {
-        return this[point3D.z][point3D.y][point3D.x]
+    operator fun List<List<List<State>>>.get(point3D: HyperspacePoint): State {
+        return this[point3D[2]][point3D[1]][point3D[0]]
     }
 }
 
 class ConwayGridB(initial: List<String>) {
 
-    var firstPoint = Point4D(0, 0, 0, 0)
+    var firstPoint = HyperspacePoint.of(0, 0, 0, 0)
 
     //w, z, y, x
     var hyperspace: List<List<List<List<State>>>>
@@ -113,20 +111,21 @@ class ConwayGridB(initial: List<String>) {
 
     private fun iterate() {
         val newHyperspace = Array(hyper + 2) { Array(depth + 2) { blankZ(width + 2, height + 2) }.toList() }.toList()
-        val newStart = firstPoint - Point4D(1, 1, 1, 1)
+        val newStart = firstPoint - HyperspacePoint.of(1, 1, 1, 1)
 
         newHyperspace.forEachIndexed { wi, layers ->
-            val w = wi + newStart.z
+            val w = wi + newStart[3]
+
             layers.forEachIndexed { zi, layer ->
-                val z = zi + newStart.z
+                val z = zi + newStart[2]
 
                 layer.forEachIndexed { yi, row ->
-                    val y = yi + newStart.y
+                    val y = yi + newStart[1]
 
                     row.forEachIndexed { xi, _ ->
-                        val x = xi + newStart.x
+                        val x = xi + newStart[0]
 
-                        val point = Point4D(x, y, z, w)
+                        val point = HyperspacePoint.of(x, y, z, w)
                         val listIndex = point.toListIndex()
 
                         val cell = if (listIndex in hyperspace) hyperspace[listIndex] else State.INACTIVE
@@ -145,14 +144,14 @@ class ConwayGridB(initial: List<String>) {
         hyperspace = newHyperspace
     }
 
-    private fun Point4D.toListIndex() = this - firstPoint
+    private fun HyperspacePoint.toListIndex() = this - firstPoint
 
-    operator fun List<List<List<List<State>>>>.contains(point: Point4D): Boolean {
-        return point.w in this.indices && point.z in this[0].indices && point.y in this[0][0].indices && point.x in this[0][0][0].indices
+    operator fun List<List<List<List<State>>>>.contains(point: HyperspacePoint): Boolean {
+        return point[3] in this.indices && point[2] in this[0].indices && point[1] in this[0][0].indices && point[0] in this[0][0][0].indices
     }
 
-    operator fun List<List<List<List<State>>>>.get(point: Point4D): State {
-        return this[point.w][point.z][point.y][point.x]
+    operator fun List<List<List<List<State>>>>.get(point: HyperspacePoint): State {
+        return this[point[3]][point[2]][point[1]][point[0]]
     }
 }
 
