@@ -10,7 +10,6 @@ internal class Day18KtTest {
 
     @Test
     fun samplesA() {
-
         assertEquals(71, solveA(listOf("1 + 2 * 3 + 4 * 5 + 6")))
         assertEquals(71, solveA(listOf("(1 + 2 * 3) + 4 * 5 + 6")))
         assertEquals(51, solveA(listOf("1 + (2 * 3) + (4 * (5 + 6))")))
