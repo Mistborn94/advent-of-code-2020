@@ -8,6 +8,7 @@ val monsterPattern =
     """|                  # 
        |#    ##    ##    ###
        | #  #  #  #  #  #   """.trimMargin()
+
 val monsterIndices = monsterPattern.lines().flatMapIndexed { y, line ->
     line.withIndex().filter { (_, value) -> value == '#' }.map { (x, _) -> Point(x, y) }
 }
@@ -19,50 +20,36 @@ class TileData(val id: Long, val data: List<String>) {
     val left = data.joinToString("") { it.first().toString() }
     val right = data.joinToString("") { it.last().toString() }
 
-    val seaMonsterCount: Int by lazy {
-        data.mapIndexed { y, line -> line.indices.count { x -> isMonster(Point(x, y)) } }.sum()
-    }
-
-    private fun isMonster(topLeft: Point): Boolean =
-        monsterIndices.map { it + topLeft }
-            .all { (x, y) -> y in data.indices && x in data[y].indices && data[y][x] == '#' }
-
-    val seaRoughness = data.sumBy { it.count { char -> char == '#' } } - seaMonsterCount * monsterIndices.size
-
     private val borders = setOf(top, bottom, left, right)
+
+    fun isCorner(allTiles: List<TileData>) =
+        borders.count { border -> allTiles.any { it != this && it.hasBorder(border) } } == 2
+
     private fun hasBorder(border: String) = border in borders || border.reversed() in borders
 
-    fun isCorner(allTiles: List<TileData>): Boolean {
-        val otherTiles = allTiles.filter { it != this }
-        return borders.count { border -> otherTiles.all { tile -> !tile.hasBorder(border) } } == 2
-    }
+    fun seaMonsterCount(): Int = data.mapIndexed { y, line -> line.indices.count { x -> isMonster(Point(x, y)) } }.sum()
+    fun seaRoughness() = data.sumBy { it.count { char -> char == '#' } } - seaMonsterCount() * monsterIndices.size
+    private fun isMonster(topLeft: Point): Boolean = monsterIndices.map { it + topLeft }
+        .all { (x, y) -> y in data.indices && x in data[y].indices && data[y][x] == '#' }
 
-    override fun toString(): String {
-        return "TileData(id=$id)"
-    }
-
-    private fun flip(): TileData {
-        return TileData(id, data.reversed())
-    }
+    private fun flip() = TileData(id, data.reversed())
 
     private fun rotate(): TileData {
-        val size = data.size
-        val newData = Array(size) { y ->
-            Array(size) { x -> data[x][size - 1 - y] }.joinToString("")
-        }.toList()
-
+        val newData = data.indices.map { y -> data.indices.map { x -> data[x][data.size - 1 - y] }.joinToString("") }
         return TileData(id, newData)
     }
 
-    fun trimBorders(): List<String> = data.subList(1, data.lastIndex).map { it.substring(1, it.lastIndex) }
-
-    val orientations: List<TileData> by lazy {
+    fun orientations(): List<TileData> {
         val rot1 = this.rotate()
         val rot2 = rot1.rotate()
         val rot3 = rot2.rotate()
 
-        listOf(this, rot1, rot2, rot3) + listOf(this.flip(), rot1.flip(), rot2.flip(), rot3.flip())
+        return listOf(this, rot1, rot2, rot3) + listOf(this.flip(), rot1.flip(), rot2.flip(), rot3.flip())
     }
+
+    fun trimBorders(): List<String> = data.subList(1, data.lastIndex).map { it.substring(1, it.lastIndex) }
+
+    override fun toString() = "TileData(id=$id)"
 }
 
 class ImageNode(val tileData: TileData) {
@@ -155,14 +142,14 @@ fun solveB(text: String): Int {
     val tiles = buildTileData(text)
     val topLeft = buildGrid(tiles)
 
-    val final = TileData(0, topLeft.combine()).orientations.first { it.seaMonsterCount > 0 }
+    val final = TileData(0, topLeft.combine()).orientations().first { it.seaMonsterCount() > 0 }
 
-    return final.seaRoughness
+    return final.seaRoughness()
 }
 
 private fun buildGrid(tiles: List<TileData>): ImageNode {
     var start = ImageNode(tiles.first())
-    val remaining = tiles.drop(1).flatMap { it.orientations }.toMutableList()
+    val remaining = tiles.drop(1).flatMap { it.orientations() }.toMutableList()
 
     buildChainRight(start, remaining)
     start = buildChainLeft(start, remaining)
