@@ -41,10 +41,10 @@ fun solveB(text: String): Int {
 
 private fun recursiveCombat(player1Cards: LinkedList<Int>, player2Cards: LinkedList<Int>): Int {
 
-    val seenConfigurations = mutableSetOf<Pair<String, String>>()
+    val seenConfigurations = mutableSetOf<Pair<List<Int>, List<Int>>>()
 
     while (player1Cards.isNotEmpty() && player2Cards.isNotEmpty()) {
-        val roundConfiguration = player1Cards.joinToString(",") to player2Cards.joinToString(",")
+        val roundConfiguration = Pair(player1Cards.toMutableList(), player2Cards.toMutableList())
 
         if (roundConfiguration in seenConfigurations) {
             return 1
@@ -56,9 +56,7 @@ private fun recursiveCombat(player1Cards: LinkedList<Int>, player2Cards: LinkedL
         val player2 = player2Cards.poll()
 
         val winner = if (player1 <= player1Cards.size && player2 <= player2Cards.size) {
-            val player1sublist = LinkedList(player1Cards.subList(0, player1))
-            val player2subList = LinkedList(player2Cards.subList(0, player2))
-            recursiveCombat(player1sublist, player2subList)
+            recursiveCombat(LinkedList(player1Cards.subList(0, player1)), LinkedList(player2Cards.subList(0, player2)))
         } else if (player1 > player2) {
             1
         } else {
