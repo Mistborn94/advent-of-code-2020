@@ -1,41 +1,31 @@
 package day22
 
 import helper.readDayFile
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@Ignore
 internal class Day22KtTest {
 
     private val day = 22
 
     @Test
     fun sample1() {
-        val lines = readDayFile(day, "sample1.in").readLines()
+        val lines = readDayFile(day, "sample1.in").readText()
 
-        assertEquals(0, day25.solveA(lines))
-        assertEquals(0, day25.solveB(lines))
-    }
-
-    @Test
-    fun sample2() {
-        val lines = readDayFile(day, "sample2.in").readLines()
-
-        assertEquals(0, day25.solveA(lines))
-        assertEquals(0, day25.solveB(lines))
+        assertEquals(306, solveA(lines))
+        assertEquals(291, solveB(lines))
     }
 
     @Test
     fun solve() {
-        val lines = readDayFile(day, "input").readLines()
+        val lines = readDayFile(day, "input").readText()
 
-        val solveA = day25.solveA(lines)
+        val solveA = solveA(lines)
         println("A: $solveA")
-        assertEquals(0, solveA)
+        assertEquals(31308, solveA)
 
-        val solveB = day25.solveB(lines)
+        val solveB = solveB(lines)
         println("B: $solveB")
-        assertEquals(0, solveB)
+        assertEquals(33647, solveB)
     }
 }
