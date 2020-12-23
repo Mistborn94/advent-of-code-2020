@@ -1,41 +1,30 @@
 package day23
 
-import helper.readDayFile
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-@Ignore
 internal class Day23KtTest {
-
-    private val day = 23
 
     @Test
     fun sample1() {
-        val lines = readDayFile(day, "sample1.in").readLines()
+        val input = "389125467"
 
-        assertEquals(0, solveA(lines))
-        assertEquals(0, solveB(lines))
+        assertEquals("92658374", solveA(input, 10))
+        assertEquals("67384529", solveA(input, 100))
+        assertEquals(149245887792, solveB(input))
     }
 
-    @Test
-    fun sample2() {
-        val lines = readDayFile(day, "sample2.in").readLines()
-
-        assertEquals(0, solveA(lines))
-        assertEquals(0, solveB(lines))
-    }
 
     @Test
     fun solve() {
-        val lines = readDayFile(day, "input").readLines()
+        val input = "467528193"
 
-        val solveA = solveA(lines)
+        val solveA = solveA(input)
         println("A: $solveA")
-        assertEquals(0, solveA)
+        assertEquals("43769582", solveA)
 
-        val solveB = solveB(lines)
+        val solveB = solveB(input)
         println("B: $solveB")
-        assertEquals(0, solveB)
+        assertEquals(264692662390, solveB)
     }
 }
