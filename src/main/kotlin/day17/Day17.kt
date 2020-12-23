@@ -28,7 +28,7 @@ class ConwayCubes(val initial: List<String>) {
     private fun iterateA() {
         lowerBounds = lowerBounds.mapToInt { it - 1 }
         upperBounds = upperBounds.mapToInt { it + 1 }
-        val newHyperspace = IntTrie(lowerBounds, upperBounds)
+        val newHyperspace = IntTrie.create(lowerBounds, upperBounds)
 
         iterateInner(0, newHyperspace)
         hyperspace = newHyperspace
@@ -43,7 +43,7 @@ class ConwayCubes(val initial: List<String>) {
     private fun iterateB() {
         lowerBounds = lowerBounds.mapToInt { it - 1 }
         upperBounds = upperBounds.mapToInt { it + 1 }
-        val newHyperspace = IntTrie(lowerBounds, upperBounds)
+        val newHyperspace = IntTrie.create(lowerBounds, upperBounds)
 
         (lowerBounds[0]..upperBounds[0]).forEach { w ->
             iterateInner(w, newHyperspace)
@@ -54,7 +54,7 @@ class ConwayCubes(val initial: List<String>) {
     private fun init() {
         lowerBounds = intArrayOf(0, 0, 0, 0)
         upperBounds = intArrayOf(0, 0, initial.lastIndex, initial[0].lastIndex)
-        hyperspace = IntTrie(lowerBounds, upperBounds)
+        hyperspace = IntTrie.create(lowerBounds, upperBounds)
 
         initial.forEachIndexed { y, row ->
             row.forEachIndexed { x, c ->
