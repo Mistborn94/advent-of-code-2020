@@ -71,24 +71,20 @@ class ConwayCubes(val initial: List<String>) {
                 (lowerBounds[3]..upperBounds[3]).forEach { x ->
                     val point = HyperspacePoint(intArrayOf(w, z, y, x))
 
-                    val cell = if (hyperspace.contains(point.parts)) State.ACTIVE else State.INACTIVE
-                    val count = point.neighbours
-                        .filter { hyperspace.contains(it.parts) }
-                        .count()
+                    val cell = if (hyperspace.contains(point.parts)) ACTIVE else INACTIVE
+                    val count = hyperspace.countWithNeighbours(point.parts) - cell
 
-                    if ((cell == State.ACTIVE && count in 2..3) || (cell == State.INACTIVE && count == 3)) {
+                    if ((cell == ACTIVE && count in 2..3) || (cell == INACTIVE && count == 3)) {
                         newHyperspace.add(point.parts)
                     }
                 }
             }
         }
     }
-}
 
-enum class State(private val char: Char) {
-    ACTIVE('#'),
-    INACTIVE('.');
-
-    override fun toString(): String = char.toString()
+    companion object {
+        private const val ACTIVE = 1
+        private const val INACTIVE = 0
+    }
 }
 
