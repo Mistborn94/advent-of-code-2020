@@ -1,88 +1,60 @@
 package helper.collections
 
 /**
- * Circular list containing unique integer values
+ * Circular list containing unique positive integer values
  */
-class IntCircularList(var head: IntNode, private val nodes: Array<IntNode?>) {
+class IntCircularList(val size: Int, elements: Collection<Int> = emptyList()) {
 
-    fun getNode(value: Int) = nodes.getValue(value)
+    private val nextLinks = IntArray(size) { UNASSIGNED }
+    private val prevLinks = IntArray(size) { UNASSIGNED }
 
-    fun remove(node: IntNode): Int {
-        node.remove()
-        return node.value
-    }
-
-    fun addAfter(value: Int, elements: Collection<Int>) = addAfter(nodes.getValue(value), elements)
-    fun addAfter(startNode: IntNode, elements: Collection<Int>) {
-        elements.iterator()
-        val end = startNode.next
-        var previous = startNode
-        elements.forEach { value ->
-            val newNode = nodes.getOrPut(value) { IntNode(value) }
-            newNode.prev = previous
-            previous.next = newNode
-            previous = newNode
-        }
-        previous.next = end
-        end.prev = previous
-    }
-
-    fun shiftLeft() {
-        head = head.next
-    }
-
-    class IntNode(val value: Int) {
-        lateinit var next: IntNode
-        lateinit var prev: IntNode
-
-        override fun toString(): String {
-            return "Node(value=$value, prev=${prev.value}, next=${next.value})"
-        }
-
-        fun remove() {
-            prev.next = next
-            next.prev = prev
-            //Because we cache the nodes, it is safer to clear out the next / prev references.
-            next = this
-            prev = this
+    init {
+        var previous = elements.first()
+        elements.forEach { new ->
+            addAfter(previous, new)
+            previous = new
         }
     }
 
-    private fun <T> Array<T?>.getValue(value: Int) = this[value] ?: throw NoSuchElementException()
-    private fun <T> Array<T?>.getOrPut(key: Int, defaultValue: () -> T): T {
-        val currentValue = this[key]
+    fun getNext(value: Int): Int = nextLinks[value]
 
-        if (currentValue == null) {
-            val newValue = defaultValue()
-            this[key] = newValue
-            return newValue
+    operator fun contains(value: Int) = nextLinks[value] != UNASSIGNED
+
+    fun remove(value: Int): Int {
+        val next = nextLinks[value]
+        val prev = prevLinks[value]
+        link(prev, next)
+        nextLinks[value] = UNASSIGNED
+        prevLinks[value] = UNASSIGNED
+        return value
+    }
+
+    fun addAfter(before: Int, element: Int) {
+        val oldNext = getNext(before)
+        link(before, element)
+
+        if (oldNext == UNASSIGNED) {
+            link(element, before)
         } else {
-            return currentValue
+            link(element, oldNext)
         }
+    }
+
+    fun addAfter(before: Int, elements: Collection<Int>) {
+        var previous = before
+        elements.forEach { new ->
+            addAfter(previous, new)
+            previous = new
+        }
+    }
+
+    private fun link(previous: Int, next: Int) {
+        nextLinks[previous] = next
+        prevLinks[next] = previous
     }
 
     companion object {
-        fun ofValues(values: Collection<Int>, max: Int = values.maxOrNull()!!): IntCircularList {
-            if (values.isEmpty()) {
-                throw IllegalArgumentException("Empty collections not supported")
-            }
-            val nodes = Array<IntNode?>(max + 1) { null }
-            val iterator = values.iterator()
-            val head = IntNode(iterator.next())
-            nodes[head.value] = head
-            var previous = head
-            while (iterator.hasNext()) {
-                val value = iterator.next()
-                val newNode = IntNode(value)
-                newNode.prev = previous
-                previous.next = newNode
-                previous = newNode
-                nodes[value] = newNode
-            }
-            previous.next = head
-            head.prev = previous
-            return IntCircularList(head, nodes)
-        }
+        private const val UNASSIGNED = -1
     }
 
 }
