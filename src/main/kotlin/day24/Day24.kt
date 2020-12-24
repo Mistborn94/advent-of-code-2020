@@ -5,68 +5,19 @@ import helper.collections.IntTrie
 import helper.mapToInt
 import java.util.*
 
-data class Hexagon(val position: HyperspacePoint) {
-
-    var white = true
-
-    fun flip() {
-        white = !white
-    }
-}
-
+/**
+ * Options for hexagon coordinate systems:
+ * https://math.stackexchange.com/questions/2254655/hexagon-grid-coordinate-system
+ */
 enum class Direction(val vector: HyperspacePoint) {
-    EAST(HyperspacePoint.of(1, 0, 0)) {
-        override val opposite: Direction
-            get() = WEST
-        override val right: Direction
-            get() = SOUTH_EAST
-        override val left: Direction
-            get() = NORTH_EAST
-    },
-    SOUTH_EAST(HyperspacePoint.of(0, -1, 1)) {
-        override val opposite: Direction
-            get() = NORTH_WEST
-        override val right: Direction
-            get() = SOUTH_WEST
-        override val left: Direction
-            get() = EAST
-    },
-    SOUTH_WEST(HyperspacePoint.of(-1, -1, 1)) {
-        override val opposite: Direction
-            get() = NORTH_EAST
-        override val right: Direction
-            get() = WEST
-        override val left: Direction
-            get() = SOUTH_EAST
-    },
-    WEST(HyperspacePoint.of(-1, 0, 0)) {
-        override val opposite: Direction
-            get() = EAST
-        override val right: Direction
-            get() = NORTH_WEST
-        override val left: Direction
-            get() = SOUTH_WEST
-    },
-    NORTH_WEST(HyperspacePoint.of(0, 1, -1)) {
-        override val opposite: Direction
-            get() = SOUTH_EAST
-        override val right: Direction
-            get() = NORTH_EAST
-        override val left: Direction
-            get() = WEST
-    },
-    NORTH_EAST(HyperspacePoint.of(1, 1, -1)) {
-        override val opposite: Direction
-            get() = SOUTH_WEST
-        override val right: Direction
-            get() = EAST
-        override val left: Direction
-            get() = NORTH_WEST
-    };
+    EAST(HyperspacePoint.of(1, -1, 0)),
+    WEST(HyperspacePoint.of(-1, 1, 0)),
 
-    abstract val opposite: Direction
-    abstract val right: Direction
-    abstract val left: Direction
+    NORTH_WEST(HyperspacePoint.of(0, 1, -1)),
+    SOUTH_EAST(HyperspacePoint.of(0, -1, 1)),
+
+    NORTH_EAST(HyperspacePoint.of(1, 0, -1)),
+    SOUTH_WEST(HyperspacePoint.of(-1, 0, 1));
 
     companion object {
         fun ofString(string: String): Direction {
@@ -94,7 +45,7 @@ private fun applyInstructions(lines: List<String>): MutableSet<HyperspacePoint> 
 
     val blackHexagons = mutableSetOf<HyperspacePoint>()
     instructions.forEach {
-        val hexagonPoint = it.fold(HyperspacePoint.of(0, 0, 0)) { point, direction -> point + direction.vector }
+        val hexagonPoint = it.fold(HyperspacePoint.zero(3)) { point, direction -> point + direction.vector }
 
         if (blackHexagons.contains(hexagonPoint)) {
             blackHexagons.remove(hexagonPoint)
@@ -110,8 +61,7 @@ fun toDirections(it: String): List<Direction> {
     val chars = LinkedList(it.toList())
 
     while (!chars.isEmpty()) {
-        val first = chars.poll()
-        val direction = when (first) {
+        val direction = when (val first = chars.poll()) {
             'w', 'e' -> Direction.ofString("$first")
             else -> Direction.ofString("$first${chars.poll()}")
         }
@@ -140,16 +90,18 @@ fun solveB(lines: List<String>): Int {
         (newLower[0]..newUpper[0]).forEach { x ->
             (newLower[1]..newUpper[1]).forEach { y ->
                 (newLower[2]..newUpper[2]).forEach { z ->
-                    val point = HyperspacePoint.of(x, y, z)
-                    val black = previous.contains(point.parts)
+                    if (x + y + z == 0) {
+                        val point = HyperspacePoint.of(x, y, z)
+                        val black = previous.contains(point.parts)
 
-                    val blackNeighbours = Direction.values().map { point + it.vector }
-                        .count { previous.contains(it.parts) }
+                        val blackNeighbours = Direction.values().map { point + it.vector }
+                            .count { previous.contains(it.parts) }
 
-                    if (black && blackNeighbours in 1..2
-                        || !black && blackNeighbours == 2
-                    ) {
-                        newTrie.add(point)
+                        if (black && blackNeighbours in 1..2
+                            || !black && blackNeighbours == 2
+                        ) {
+                            newTrie.add(point)
+                        }
                     }
                 }
             }

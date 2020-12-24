@@ -40,16 +40,16 @@ internal class Day24KtTest {
 
         assertEquals(0, solveA(lines1))
         assertEquals(0, solveA(lines2))
-
-//        assertEquals(0, solveB(lines))
     }
 
     @Test
     fun testDirections() {
-        val zeroPoint = HyperspacePoint.of(0, 0, 0)
-        assertSum(zeroPoint, listOf(Direction.NORTH_EAST, Direction.SOUTH_EAST, Direction.WEST))
-        assertSum(zeroPoint, listOf(Direction.NORTH_EAST, Direction.WEST, Direction.SOUTH_EAST))
+        val zeroPoint = HyperspacePoint.zero(3)
+        assertSum("Test 1", zeroPoint, listOf(Direction.NORTH_EAST, Direction.SOUTH_EAST, Direction.WEST))
+        assertSum("Test 2", zeroPoint, listOf(Direction.NORTH_EAST, Direction.WEST, Direction.SOUTH_EAST))
+        assertSum("Test 3", zeroPoint, Direction.values().toList())
         assertSum(
+            "Test 4",
             zeroPoint,
             listOf(
                 Direction.NORTH_WEST,
@@ -65,8 +65,12 @@ internal class Day24KtTest {
 
     }
 
-    private fun assertSum(point: HyperspacePoint, directions: List<Direction>) {
-        assertEquals(point, directions.fold(HyperspacePoint.of(0, 0, 0)) { acc, direction -> acc + direction.vector })
+    private fun assertSum(message: String, point: HyperspacePoint, directions: List<Direction>) {
+        assertEquals(
+            point,
+            directions.fold(HyperspacePoint.of(0, 0, 0)) { acc, direction -> acc + direction.vector },
+            message
+        )
     }
 
     @Test

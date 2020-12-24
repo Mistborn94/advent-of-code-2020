@@ -33,5 +33,6 @@ class HyperspacePoint constructor(val parts: IntArray) {
 
     companion object {
         fun of(vararg parts: Int) = HyperspacePoint(parts)
+        fun zero(dimensions: Int) = HyperspacePoint(IntArray(dimensions) { 0 })
     }
 }
