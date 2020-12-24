@@ -53,3 +53,5 @@ tailrec fun greatestCommonDivisor(a: Long, b: Long): Long {
 }
 
 fun IntArray.mapToInt(transform: (Int) -> Int): IntArray = IntArray(this.size) { transform(this[it]) }
+fun IntArray.mapIndexedToInt(transform: (index: Int, value: Int) -> Int): IntArray =
+    IntArray(this.size) { transform(it, this[it]) }

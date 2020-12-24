@@ -34,5 +34,11 @@ class HyperspacePoint constructor(val parts: IntArray) {
     companion object {
         fun of(vararg parts: Int) = HyperspacePoint(parts)
         fun zero(dimensions: Int) = HyperspacePoint(IntArray(dimensions) { 0 })
+
+        fun minOfComponents(a: HyperspacePoint, b: HyperspacePoint) =
+            HyperspacePoint(IntArray(a.size) { i -> minOf(a[i], b[i]) })
+
+        fun maxOfComponents(a: HyperspacePoint, b: HyperspacePoint) =
+            HyperspacePoint(IntArray(a.size) { i -> maxOf(a[i], b[i]) })
     }
 }

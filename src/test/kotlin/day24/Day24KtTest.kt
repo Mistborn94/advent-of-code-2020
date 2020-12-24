@@ -44,7 +44,7 @@ internal class Day24KtTest {
 
     @Test
     fun testDirections() {
-        val zeroPoint = HyperspacePoint.zero(3)
+        val zeroPoint = HyperspacePoint.zero(2)
         assertSum("Test 1", zeroPoint, listOf(Direction.NORTH_EAST, Direction.SOUTH_EAST, Direction.WEST))
         assertSum("Test 2", zeroPoint, listOf(Direction.NORTH_EAST, Direction.WEST, Direction.SOUTH_EAST))
         assertSum("Test 3", zeroPoint, Direction.values().toList())
