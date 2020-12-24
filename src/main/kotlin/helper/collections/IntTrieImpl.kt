@@ -1,13 +1,28 @@
 package helper.collections
 
+import helper.HyperspacePoint
+
 /**
  * Stores constant-length integer sequences where each element is within certain bounds
  */
 interface IntTrie {
+
+    val lowerBounds: IntArray
+    val upperBounds: IntArray
+
     fun count(): Int
     fun countWithNeighbours(location: IntArray): Int
     fun add(location: IntArray)
+    fun add(location: HyperspacePoint) {
+        add(location.parts)
+    }
+
+    fun addAll(locations: Collection<HyperspacePoint>) {
+        locations.forEach(this::add)
+    }
+
     fun contains(location: IntArray): Boolean
+    fun contains(location: HyperspacePoint): Boolean = contains(location.parts)
     fun subtree(index: Int): IntTrie?
 
     companion object {
@@ -32,7 +47,8 @@ private sealed class TrieNode {
     abstract fun count(): Int
     abstract fun countWithNeighbours(location: IntArray): Int
 
-    class InnerNode(val lowerBounds: IntArray, val upperBounds: IntArray, val dimension: Int) : TrieNode(), IntTrie {
+    class InnerNode(override val lowerBounds: IntArray, override val upperBounds: IntArray, val dimension: Int) :
+        TrieNode(), IntTrie {
         private val lowerBound get() = lowerBounds[dimension]
         private val upperBound get() = upperBounds[dimension]
         private val nodes: Array<TrieNode> = Array(upperBound - lowerBound + 1) { EmptyNode }

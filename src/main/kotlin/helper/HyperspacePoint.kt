@@ -30,4 +30,8 @@ class HyperspacePoint constructor(val parts: IntArray) {
     override fun equals(other: Any?) = other is HyperspacePoint && parts.contentEquals(other.parts)
     override fun hashCode(): Int = parts.contentHashCode()
     override fun toString(): String = parts.joinToString(prefix = "[", postfix = "]", separator = ",")
+
+    companion object {
+        fun of(vararg parts: Int) = HyperspacePoint(parts)
+    }
 }

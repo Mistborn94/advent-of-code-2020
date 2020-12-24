@@ -70,6 +70,10 @@ fun solveBAlternate(line: String): Long {
     return solveRemainders(numbers, remainders)
 }
 
+/**
+ * Find x where
+ *  x % moduli[0] = remainders[0]
+ */
 fun solveRemainders(
     moduli: List<Long>,
     remainders: List<Long>
@@ -84,7 +88,7 @@ fun solveRemainders(
 }
 
 /**
- * Calculate the Modular Multiplicative Inverse of [a] under [m]
+ * Calculate the Modular Multiplicative Inverse [x] of [a] under [m]
  * ax mod m = 1 where x in {0,1,2....m-1}
  */
 fun mmi(a: Long, m: Long): Long {
